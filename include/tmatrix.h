@@ -25,8 +25,10 @@ protected:
 public:
   TDynamicVector(size_t size = 1) : sz(size)
   {
-    if (sz == 0)
+    if (sz <= 0)
       throw out_of_range("Vector size should be greater than zero");
+    if (size > MAX_VECTOR_SIZE) 
+      throw out_of_range("Vector size should be smaller");
     pMem = new T[sz]();// {}; // У типа T д.б. констуктор по умолчанию
   }
   TDynamicVector(T* arr, size_t s) : sz(s)
@@ -37,18 +39,44 @@ public:
   }
   TDynamicVector(const TDynamicVector& v)
   {
+      if (v.sz <= 0)
+          throw out_of_range("Vector size should be greater than zero");
+      if (v.sz > MAX_VECTOR_SIZE) 
+          throw out_of_range("Vector size should be smaller");
+      sz = v.sz;
+      pMem = new T[sz]();
+      for (int i = 0; i < sz; i++) pMem[i] = v.pMem[i];
   }
   TDynamicVector(TDynamicVector&& v) noexcept
   {
+      pMem = nullptr;
+      swap(*this, v);
   }
   ~TDynamicVector()
   {
+      delete[] pMem;
   }
   TDynamicVector& operator=(const TDynamicVector& v)
   {
+      if (this != &v)
+      {
+          if (sz != v.sz)
+          {
+              delete[] pMem;
+              sz = v.sz;
+              pMem = new T[sz]();
+          }
+          for (int i = 0; i < sz; i++)
+          {
+              pMem[i] = v.pMem[i];
+          }
+      }
+      return *this;
   }
   TDynamicVector& operator=(TDynamicVector&& v) noexcept
   {
+      swap(*this, v);
+      return *this;
   }
 
   size_t size() const noexcept { return sz; }
@@ -56,46 +84,129 @@ public:
   // индексация
   T& operator[](size_t ind)
   {
+      if (ind < 0)
+          throw out_of_range("Index should't be negative");
+      if (ind > MAX_VECTOR_SIZE)
+          throw out_of_range("Index should be smaller");
+
+      return pMem[ind];
   }
   const T& operator[](size_t ind) const
   {
+      if (ind < 0)
+          throw out_of_range("Index should't be negative");
+      if (ind > MAX_VECTOR_SIZE)
+          throw out_of_range("Index should be smaller");
+
+      return pMem[ind];
   }
   // индексация с контролем
   T& at(size_t ind)
   {
+      if (ind < 0)
+          throw out_of_range("Index should't be negative");
+      if (ind > MAX_VECTOR_SIZE)
+          throw out_of_range("Index should be smaller");
+
+      return pMem[ind];
   }
   const T& at(size_t ind) const
   {
+      if (ind < 0)
+          throw out_of_range("Index should't be negative");
+      if (ind > MAX_VECTOR_SIZE)
+          throw out_of_range("Index should be smaller");
+
+      return pMem[ind];
   }
 
   // сравнение
   bool operator==(const TDynamicVector& v) const noexcept
   {
+      if (v.sz != sz)
+          return false;
+      if (this == &v)
+          return true;
+      for (int i = 0; i < sz; i++)
+      {
+          if (pMem[i] != v.pMem[i]) return false;
+      }
+      return true;
   }
   bool operator!=(const TDynamicVector& v) const noexcept
   {
+      if (this == &v)
+          return false;
+      for (int i = 0; i < sz; i++)
+      {
+          if (pMem[i] == v.pMem[i]) return false;
+      }
+      return true;
   }
 
   // скалярные операции
   TDynamicVector operator+(T val)
   {
+      TDynamicVector tmp[sz];
+      for (int i = 0; i < sz; i++)
+      {
+          tmp.pMem[i] = pMem[i] + val;
+      }
+      return tmp;
+          
   }
   TDynamicVector operator-(double val)
   {
+      TDynamicVector tmp[sz];
+      for (int i = 0; i < sz; i++)
+      {
+          tmp.pMem[i] = pMem[i] - val;
+      }
+      return tmp;
   }
   TDynamicVector operator*(double val)
   {
+      TDynamicVector tmp[sz];
+      for (int i = 0; i < sz; i++)
+      {
+          tmp.pMem[i] = pMem[i] * val;
+      }
+      return tmp;
   }
 
   // векторные операции
   TDynamicVector operator+(const TDynamicVector& v)
   {
+      if (sz != v.sz)
+          throw ("Vectors have different sizes");
+      TDynamicVector tmp[sz];
+      for (int i = 0; i < sz; i++)
+      {
+          tmp.pMem[i] = pMem[i] + v.pMem[i];
+      }
+      return tmp;
   }
   TDynamicVector operator-(const TDynamicVector& v)
   {
+      if (sz != v.sz)
+          throw ("Vectors have different sizes");
+      TDynamicVector tmp[sz];
+      for (int i = 0; i < sz; i++)
+      {
+          tmp.pMem[i] = pMem[i] - v.pMem[i];
+      }
+      return tmp;
   }
   T operator*(const TDynamicVector& v) noexcept(noexcept(T()))
   {
+      if (sz != v.sz)
+          throw ("Vectors have different sizes");
+      int tmp = 0;
+      for (int i = 0; i < sz; i++)
+      {
+          tmp += pMem[i] * v.pMem[i];
+      }
+      return tmp;
   }
 
   friend void swap(TDynamicVector& lhs, TDynamicVector& rhs) noexcept
