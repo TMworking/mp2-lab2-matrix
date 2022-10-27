@@ -86,7 +86,7 @@ public:
   {
       if (ind < 0)
           throw out_of_range("Index should't be negative");
-      if (ind > MAX_VECTOR_SIZE)
+      if (ind > sz)
           throw out_of_range("Index should be smaller");
 
       return pMem[ind];
@@ -95,7 +95,7 @@ public:
   {
       if (ind < 0)
           throw out_of_range("Index should't be negative");
-      if (ind > MAX_VECTOR_SIZE)
+      if (ind > sz)
           throw out_of_range("Index should be smaller");
 
       return pMem[ind];
@@ -105,7 +105,7 @@ public:
   {
       if (ind < 0)
           throw out_of_range("Index should't be negative");
-      if (ind > MAX_VECTOR_SIZE)
+      if (ind > sz)
           throw out_of_range("Index should be smaller");
 
       return pMem[ind];
@@ -114,7 +114,7 @@ public:
   {
       if (ind < 0)
           throw out_of_range("Index should't be negative");
-      if (ind > MAX_VECTOR_SIZE)
+      if (ind > sz)
           throw out_of_range("Index should be smaller");
 
       return pMem[ind];
